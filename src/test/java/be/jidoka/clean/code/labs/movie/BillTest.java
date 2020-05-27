@@ -40,6 +40,38 @@ public class BillTest {
 	}
 
 	@Test
+	public void seniorAdmissionShouldEqualSeniorPrice() {
+		bill.startPurchase(100, DayOfWeek.WEDNESDAY, false, false);
+		bill.addTicket(70, false);
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(6.0);
+	}
+
+	@Test
+	public void childAdmissionShouldEqualChildPrice() {
+		bill.startPurchase(100, DayOfWeek.WEDNESDAY, false, false);
+		bill.addTicket(12, false);
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(5.5);
+	}
+
+	@Test
+	public void groupAdmissionShouldEqualGroupPrice() {
+		bill.startPurchase(100, DayOfWeek.WEDNESDAY, false, false);
+		for (int i = 0; i < 20; i++) {
+			bill.addTicket(18, false);
+		}
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(120.0);
+	}
+
+	@Test
 	public void multipleGeneralAdmissionsShouldEqualDefaultPrice() {
 		// Arrange
 		bill.startPurchase(100, DayOfWeek.WEDNESDAY, false, false);
@@ -62,6 +94,71 @@ public class BillTest {
 
 		assertThat(ticketPrice).isEqualTo(14.0);
 	}
+
+	@Test
+	public void overLengthAddToTicketPrice() {
+		bill.startPurchase(130, DayOfWeek.WEDNESDAY, false, false);
+		bill.addTicket(18, false);
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(12.5);
+	}
+
+	@Test
+	public void weekendAddToTicketPrice() {
+		bill.startPurchase(100, DayOfWeek.SUNDAY, false, false);
+		bill.addTicket(18, false);
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(12.5);
+	}
+
+	@Test
+	public void logeAddToTicketPrice() {
+		bill.startPurchase(100, DayOfWeek.WEDNESDAY, true, false);
+		bill.addTicket(18, false);
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(13.0);
+	}
+
+	@Test
+	public void movieDaySubtractFromTicketPrice() {
+		bill.startPurchase(100, DayOfWeek.THURSDAY, false, false);
+		bill.addTicket(18, false);
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(9.0);
+	}
+
+	@Test
+	public void movieDayGroupTicketPrice() {
+		bill.startPurchase(100, DayOfWeek.THURSDAY, false, false);
+		for (int i = 0; i < 20; i++) {
+			bill.addTicket(18, false);
+		}
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(120);
+	}
+
+	@Test
+	public void movieDaySubtractMultipleTicketPrice() {
+		bill.startPurchase(100, DayOfWeek.THURSDAY, false, false);
+		for (int i = 0; i < 19; i++) {
+			bill.addTicket(18, false);
+		}
+
+		double ticketPrice = bill.finishPurchase();
+
+		assertThat(ticketPrice).isEqualTo(171.0);
+	}
+
 
 	// ZOMBIE
 
