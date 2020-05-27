@@ -6,66 +6,22 @@ import java.util.List;
 
 public class Calculator implements Bill {
 
-	private final List<Double> ticketPrices = new ArrayList<>();
-	private double extraPrice = 0.0;
-	private DayOfWeek dayOfWeek;
+	private Purchase purchase;
 
 	@Override
 	public void startPurchase(int runtime, DayOfWeek dayOfWeek, boolean loge, boolean threeD) {
-		this.dayOfWeek = dayOfWeek;
+		purchase = new Purchase(runtime,dayOfWeek,loge,threeD);
 
-		if (threeD) {
-			extraPrice += 3.0;
-		}
-		if (runtime > 120) {
-			extraPrice += 1.5;
-		}
-		if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
-			extraPrice += 1.5;
-		}
-		if (loge) {
-			extraPrice += 2.0;
-		}
+		purchase.calculateExtraTicketPrice();
 	}
 
 	@Override
 	public void addTicket(int age, boolean student) {
-		double ticketPrice = 0;
-
-		if (student) {
-			ticketPrice = 8.0;
-		} else {
-			if (age >= 65) {
-				ticketPrice = 6.0;
-			}
-			else if (age < 13) {
-				ticketPrice = 5.5;
-			}
-			else {
-				ticketPrice = 11.0;
-			}
-		}
-
-		ticketPrices.add(ticketPrice);
+		purchase.addTicket(new Ticket(age, student, this.purchase.getExtraPrice()));
 	}
 
 	@Override
 	public double finishPurchase() {
-		double sum = 0.0;
-
-		if (this.dayOfWeek == DayOfWeek.THURSDAY && ticketPrices.size() < 20) {
-			extraPrice -= 2.0;
-		}
-
-		if (ticketPrices.size() >= 20) {
-			sum = ticketPrices.size() * (6.0 + extraPrice);
-		}
-		else {
-			for (Double ticketPrice : ticketPrices) {
-				sum += ticketPrice + extraPrice;
-			}
-		}
-
-		return sum;
+		return purchase.calculateTotalPrice();
 	}
 }
